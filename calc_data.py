@@ -1,5 +1,10 @@
 import json
 import sys
+from operator import itemgetter
+import matplotlib.pyplot as plt
+import datetime as dt
+import matplotlib.mlab as mlab
+import numpy as np
 
 def read_data(filename):
 	with open(filename) as fout:
@@ -67,7 +72,7 @@ def calc_budget(movies):
 
 
 	for movie in movies:
-		if movie['budget'] < min and movie['budget'] != 0:
+		if movie['budget'] < min and movie['budget'] > 1000:
 			min = movie['budget']
 			min_name = movie['title']
 		if movie['budget'] > max:
@@ -101,11 +106,118 @@ def calc_stats(movies):
 	
 	return scores
 
+def calc_antique(movies):
+
+	today = dt.date.today()
+	release_delta = list()
+
+	for movie in movies:
+		x=0
+		aux = movie['date'].split('-')[0]
+		release_delta.append(aux)
+
+	release_delta.sort()
+	return release_delta
+
+def draw_antique(release_delta):
+
+	k = [int(n) for n in release_delta]
+	bins = [i for i in range(1930,2030,3)]
+	print(bins)
+
+	plt.hist(k,bins,histtype='bar',rwidth=0.99)
+
+	#plt.bar(k,k2,label='Bars1')
+	plt.show()
+
+def draw_ratings_hist(movies):
+
+	k = list()
+
+	for movie in movies:
+		if movie['votes'] != 0.0:
+			k.append(movie['votes'])
+	bins = [i for i in range(11)]
+
+	plt.hist(k,bins,histtype='bar',rwidth=0.99)
+
+	#plt.bar(k,k2,label='Bars1')
+	plt.show()
+
+def draw_times(movies):
+
+	k = [movie['runtime'] for movie in movies]
+	bins = [i for i in range(30,210,5)]
+
+	plt.hist(k,bins,histtype='bar',rwidth=1)
+	plt.show()
+
+def draw_genres(genres,limit=0):
+
+	sum = 0
+	labels = []
+	sizes = []
+	newlist = sorted(genres, key=itemgetter('number'),reverse=True)
+
+	for g in range(limit):
+		print(str(g))
+		labels.append(newlist[g]['genre_name'])
+		sizes.append(newlist[g]['number'])
+
+	if limit == 0:	
+		for a in range(7,len(newlist)):
+			sum += newlist[a]['number']
+		labels.append('Others')
+		sizes.append(sum)
+
+	else:
+		for a in range(limit,len(newlist)):
+			sum += newlist[a]['number']
+		labels.append('Others')
+		sizes.append(sum)
+
+	fig, ax = plt.subplots()
+	ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+	ax.axis('equal')
+	fig.suptitle('Movies by genre')
+	plt.show()
+
+def draw_ratings(movies):
+
+	ordered_list = sorted(movies, key=itemgetter('votes'),reverse=True)
+	ratings = [movie['votes'] for movie in movies]
+	labels = [movie['title'] for movie in movies]
+	xx = [x for x in range(1,len(movies)+1)]
+
+	fig, ax = plt.subplots()
+	ax.bar(xx,ratings)
+	ax.set_xticks(xx)
+	ax.set_xticklabels([movie['title'] for movie in movies])
+	plt.show()
+
 if __name__ == '__main__':
-	
-	movie_data = read_data(sys.argv[1])
+
+	movie_data = read_data(sys.argv[1]) #data file
+
+	date = movie_data[0]['date']
+
+	print(type(date))
+	release_delta = calc_antique(movie_data)
+
+	draw_ratings(movie_data)
+	#draw_times(movie_data)
+	#draw_ratings_hist(movie_data)
+
+	#print(release_delta)
+	#draw_antique(release_delta)
+
+	#for x in release_delta:
+	#	print(x)
+
+	#genres = count_genres(movie_data)
 	#print(movie_data)
-	print(count_genres(movie_data))
-	print(calc_budget(movie_data))
-	print(calc_stats(movie_data))
-	print(calc_times(movie_data))
+	#print(count_genres(movie_data))
+	#print(calc_budget(movie_data))
+	#print(calc_stats(movie_data))
+	#print(calc_times(movie_data))
+	#draw_genres(genres,6)

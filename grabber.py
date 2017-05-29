@@ -88,49 +88,6 @@ def get_list():
 
 	return movies
 
-def draw_genres(genres,limit=0):
-
-	sum = 0
-	labels = []
-	sizes = []
-	newlist = sorted(genres, key=itemgetter('number'),reverse=True)
-
-	for g in range(limit):
-		print(str(g))
-		labels.append(newlist[g]['genre_name'])
-		sizes.append(newlist[g]['number'])
-
-	if limit == 0:	
-		for a in range(7,len(newlist)):
-			sum += newlist[a]['number']
-		labels.append('Others')
-		sizes.append(sum)
-
-	else:
-		for a in range(limit,len(newlist)):
-			sum += newlist[a]['number']
-		labels.append('Others')
-		sizes.append(sum)
-
-	fig, ax = plt.subplots()
-	ax.pie(sizes,labels=labels,autopct='%1.1f%%')
-	ax.axis('equal')
-	fig.suptitle('Movies by genre')
-	plt.show()
-
-def draw_ratings(movies):
-
-	ordered_list = sorted(movies, key=itemgetter('votes'),reverse=True)
-	ratings = [movie['votes'] for movie in movies]
-	labels = [movie['title'] for movie in movies]
-	xx = [x for x in range(1,len(movies)+1)]
-
-	fig, ax = plt.subplots()
-	ax.bar(xx,ratings)
-	ax.set_xticks(xx)
-	ax.set_xticklabels([movie['title'] for movie in movies])
-	plt.show()
-
 def dump_json(movies):
 	
 	with open('movie_data','w') as fout:
