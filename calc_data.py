@@ -2,9 +2,9 @@ import json
 import sys
 from operator import itemgetter
 import matplotlib.pyplot as plt
-import datetime as dt
 import matplotlib.mlab as mlab
 import numpy as np
+import datetime as dt
 
 def read_data(filename):
 	with open(filename) as fout:
@@ -204,12 +204,12 @@ if __name__ == '__main__':
 	print(type(date))
 	release_delta = calc_antique(movie_data)
 
-	draw_ratings(movie_data)
+	#draw_ratings(movie_data)
 	#draw_times(movie_data)
 	#draw_ratings_hist(movie_data)
 
 	#print(release_delta)
-	#draw_antique(release_delta)
+	draw_antique(release_delta)
 
 	#for x in release_delta:
 	#	print(x)
